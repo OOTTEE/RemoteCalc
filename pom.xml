@@ -11,6 +11,7 @@
     <modules>
         <module>polish-calc-server</module>
         <module>polish-calc-client</module>
+        <module>polish-calc-api</module>
     </modules>
 
     <properties>
