@@ -3,12 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>me.ote.remotecalc</groupId>
-    <artifactId>remotecalc</artifactId>
+    <groupId>me.ote.polishcalc</groupId>
+    <artifactId>polish-calc</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>me.ote.remotecalc.server</groupId>
+  <groupId>me.ote.polishcalc.server</groupId>
   <artifactId>${parent.artifactId}-server</artifactId>
   <version>${parent.version}</version>
 
