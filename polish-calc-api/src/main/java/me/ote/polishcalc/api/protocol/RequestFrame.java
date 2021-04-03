@@ -1,5 +1,6 @@
 package me.ote.polishcalc.api.protocol;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class RequestFrame {
@@ -30,6 +31,10 @@ public class RequestFrame {
 
     public byte[] getPayload() {
         return payload;
+    }
+
+    public String getStringPayload() {
+        return new String(payload, StandardCharsets.UTF_8);
     }
 
     @Override
