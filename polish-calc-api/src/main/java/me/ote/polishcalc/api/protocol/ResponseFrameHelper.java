@@ -6,6 +6,7 @@ public class ResponseFrameHelper {
 
     public static final byte[] FAIL_PAYLOAD = {'F', 'A', 'I', 'L'};
     public static final byte[] ERROR_PAYLOAD = {'E', 'R', 'R', 'O', 'R'};
+    public static final byte[] ACK = {0x06};
     public static final byte SEPARATOR = ';';
     public static final byte END = '$';
 
@@ -19,6 +20,13 @@ public class ResponseFrameHelper {
 
     public ResponseFrame createErrorResponse(Integer messageId) {
         return new ResponseFrame(messageId, ERROR_PAYLOAD);
+    }
+
+    public ResponseFrame createHelloResponse(Integer messageId) {
+        return new ResponseFrame(messageId, ACK);
+    }
+    public ResponseFrame createByeResponse(Integer messageId) {
+        return new ResponseFrame(messageId, new byte[0]);
     }
 
     public byte[] buildFrame(ResponseFrame responseFrame) {

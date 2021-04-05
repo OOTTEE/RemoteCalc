@@ -1,12 +1,10 @@
 package me.ote.polishcalc.api.protocol;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class RequestFrame {
     public static final byte SEPARATOR = 0x3B;
     public static final byte END = 0x24;
-    public static final byte ACK = 0x06;
     public static final int BYTE_MSG_ID = 0;
     public static final int BYTE_OPERATION = 3;
     public static final int BYTE_PAYLOAD = 5;
@@ -31,10 +29,6 @@ public class RequestFrame {
 
     public byte[] getPayload() {
         return payload;
-    }
-
-    public String getStringPayload() {
-        return new String(payload, StandardCharsets.UTF_8);
     }
 
     @Override

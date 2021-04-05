@@ -45,6 +45,7 @@ public class RequestFrameHelperTest {
         Assertions.assertArrayEquals(new byte[0], helloFrame.getPayload());
         Assertions.assertArrayEquals(new byte[] {0x31, 0x20, 0x32, 0x20, 0x33, 0x20, 0x2A, 0x20, 0x2B}, opFrame.getPayload());
         Assertions.assertArrayEquals(new byte[0], byeFrame.getPayload());
+        Assertions.assertEquals("1 2 3 + *", ((OperationFrame)opFrame).getStringPayload());
     }
 
     @Test
