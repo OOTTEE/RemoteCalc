@@ -25,6 +25,12 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>me.ote.remotecalc.api</groupId>
+      <artifactId>polish-calc-api</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>
