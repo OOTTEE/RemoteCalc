@@ -49,4 +49,8 @@ public class RemotePolishCalculator {
         server.start();
     }
 
+    public void stop() throws InterruptedException {
+        server.stop();
+    }
+
 }
