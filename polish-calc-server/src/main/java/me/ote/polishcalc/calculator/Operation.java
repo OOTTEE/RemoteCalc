@@ -1,5 +1,7 @@
 package me.ote.polishcalc.calculator;
 
+import io.netty.util.internal.StringUtil;
+
 import java.util.List;
 
 public class Operation {
@@ -11,6 +13,10 @@ public class Operation {
 
     public List<String> getChain() {
         return value;
+    }
+
+    public String getOperationStr() {
+        return StringUtil.join(" " , value).toString();
     }
 
 }

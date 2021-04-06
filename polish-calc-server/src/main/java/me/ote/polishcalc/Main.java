@@ -19,12 +19,12 @@ public class Main {
         @Inject
         Logger log;
         @Inject
-        Server server;
+        RemotePolishCalculator remotePolishCalculator;
 
         @Override
         public int run(String... args) throws Exception {
             log.info("MAIN START");
-            server.start();
+            remotePolishCalculator.run();
             Quarkus.waitForExit();
             log.info("MAIN STOP");
             return 0;
