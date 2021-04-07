@@ -1,12 +1,11 @@
 package me.ote.polishcalc.server;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.quarkus.test.junit.QuarkusTest;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static me.ote.polishcalc.ClientFactory.createClient;
 
 @QuarkusTest
 public class ServerDefualtConfigTest {
@@ -126,19 +127,5 @@ public class ServerDefualtConfigTest {
         }
     }
 
-    private Bootstrap createClient(EventLoopGroup group, ChannelInboundHandlerAdapter handler) {
-        // Configure the client.
-        Bootstrap b = new Bootstrap();
-        b.group(group)
-                .channel(NioSocketChannel.class)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(handler);
-                    }
-                });
-        return b;
-    }
 
 }
