@@ -3,7 +3,6 @@ package me.ote.polishcalc;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import me.ote.polishcalc.server.Server;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
