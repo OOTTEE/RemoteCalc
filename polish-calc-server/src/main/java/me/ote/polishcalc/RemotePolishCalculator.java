@@ -1,6 +1,7 @@
 package me.ote.polishcalc;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import me.ote.polishcalc.api.protocol.*;
@@ -45,6 +46,7 @@ public class RemotePolishCalculator {
                 final ByteBuf byteBuf = (ByteBuf) msg;
                 final byte[] receivedBytes = new byte[byteBuf.readableBytes()];
                 byteBuf.readBytes(receivedBytes);
+                byteBuf.release();
                 try {
                     final RequestFrame requestFrame = requestFrameHelper.readFrame(receivedBytes);
                     if (requestFrame instanceof HelloFrame) {
@@ -70,21 +72,21 @@ public class RemotePolishCalculator {
                     logger.info(String.format("<<< [ip:%s] Received OPERATION (Operation: %s)", ctx.channel().remoteAddress().toString(), operation.getOperationStr()));
                     Integer result = calculatorService.calculate(operation);
                     ResponseFrame response = responseFrameHelper.createResponse(operationFrame.getMessageId(), String.valueOf(result));
-                    ctx.writeAndFlush(responseFrameHelper.buildFrame(response));
+                    sendFrame(ctx, response);
                     logger.info(String.format(">>> [ip:%s] Respond (Operation: %s, result: %s)", ctx.channel().remoteAddress(), operation.getOperationStr(), result));
                 } catch (Exception e) {
                     logger.error(String.format("<<< [ip:%s] Received BAD OPERATION (Operation: %s)", ctx.channel().remoteAddress().toString(), operation.getOperationStr()));
                     ResponseFrame failResponse = responseFrameHelper.createFailResponse(operationFrame.getMessageId());
                     logger.info(String.format(">>> [ip:%s] Respond ERROR", ctx.channel().remoteAddress()));
-                    ctx.writeAndFlush(responseFrameHelper.buildFrame(failResponse));
+                    sendFrame(ctx, failResponse);
                 }
             }
 
             private void handlerByeFrame(ChannelHandlerContext ctx, RequestFrame requestFrame) {
                 final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
                 logger.info(String.format("<<< [ip:%s] Received BYE frame from client", ctx.channel().remoteAddress().toString()));
-                ResponseFrame byeResponse = responseFrameHelper.createByeResponse(requestFrame.getMessageId());
-                ctx.writeAndFlush(responseFrameHelper.buildFrame(byeResponse));
+                final ResponseFrame byeResponse = responseFrameHelper.createByeResponse(requestFrame.getMessageId());
+                sendFrame(ctx, byeResponse);
                 logger.info(String.format(">>> [ip:%s] Respond BYE ACK", ctx.channel().remoteAddress()));
                 try {
                     logger.info(String.format(">>> [ip:%s] Close connection from server side", ctx.channel().remoteAddress()));
@@ -94,21 +96,27 @@ public class RemotePolishCalculator {
                 }
             }
 
-
             private void handlerHelloFrame(ChannelHandlerContext ctx, HelloFrame helloFrame) {
                 final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
                 logger.info(String.format("<<< [ip:%s] Received HELLO", ctx.channel().remoteAddress()));
-                ResponseFrame response = responseFrameHelper.createHelloResponse(helloFrame.getMessageId());
-                ctx.writeAndFlush(response);
+                final ResponseFrame response = responseFrameHelper.createHelloResponse(helloFrame.getMessageId());
+                sendFrame(ctx, response);
                 logger.info(String.format(">>> [ip:%s] Respond HELLO ACK", ctx.channel().remoteAddress()));
             }
 
             private void handlerUnexpectedFrame(ChannelHandlerContext ctx, Integer messageId) {
                 final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
                 logger.error(String.format("<<< [ip:%s] Received UNEXPECTED frame", ctx.channel().remoteAddress()));
-                ResponseFrame errorResponse = responseFrameHelper.createErrorResponse(messageId);
-                ctx.writeAndFlush(responseFrameHelper.buildFrame(errorResponse));
+                final ResponseFrame errorResponse = responseFrameHelper.createErrorResponse(messageId);
+                sendFrame(ctx, errorResponse);
                 logger.info(String.format(">>> [ip:%s] Respond ERROR", ctx.channel().remoteAddress()));
+            }
+
+            private void sendFrame(ChannelHandlerContext ctx, ResponseFrame responseFrame) {
+                final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
+                final ByteBuf byteBuf = Unpooled.buffer();
+                byteBuf.writeBytes(responseFrameHelper.buildFrame(responseFrame));
+                ctx.writeAndFlush(byteBuf);
             }
         });
         server.start();
