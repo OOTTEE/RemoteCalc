@@ -54,7 +54,7 @@ If the operation is failed for any reason the server return a FAIL payload.
 #### Bye
 This frame close the connection with the server. The frame not have payload.
 
-- Example REQ frame: `0x0010 0x02 0x24`
+- Example REQ frame: `0x0010 0x3B 0x02 0x3B 0x24`
 - Example RES frame: `0x0010 0x3B 0x425945 0x24`
 
 #### Error frames:
