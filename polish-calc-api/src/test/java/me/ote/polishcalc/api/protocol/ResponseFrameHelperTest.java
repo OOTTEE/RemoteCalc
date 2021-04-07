@@ -44,5 +44,28 @@ public class ResponseFrameHelperTest {
         Assertions.assertArrayEquals(EMPTY_FRAME, rawFrame);
     }
 
+    @Test
+    public void readByeFrame() throws FrameFormatException {
+        ResponseFrame responseFrame = new ResponseFrameHelper().readFrame(new byte[]{0x01, 0x01, 0x3b, 'B', 'Y', 'E', 0x24});
+        Assertions.assertEquals(257, responseFrame.getMessageId());
+        Assertions.assertArrayEquals(new byte[]{'B', 'Y', 'E'}, responseFrame.getPayload());
+    }
+
+    @Test
+    public void readHelloFrame() throws FrameFormatException {
+        ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
+        ResponseFrame responseFrame = new ResponseFrameHelper().readFrame(new byte[]{0x11, 0x01, 0x3b, 0x06, 0x24});
+        Assertions.assertEquals(4353, responseFrame.getMessageId());
+        Assertions.assertArrayEquals(new byte[]{0x06}, responseFrame.getPayload());
+    }
+
+    @Test
+    public void readOperationFrame() throws FrameFormatException {
+        ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
+        ResponseFrame responseFrame = new ResponseFrameHelper().readFrame(new byte[]{0x0f, 0x0f, 0x3b, 0x31, 0x32, 0x33, 0x24});
+        Assertions.assertEquals(3855, responseFrame.getMessageId());
+        Assertions.assertArrayEquals(new byte[]{0x31, 0x32, 0x33}, responseFrame.getPayload());
+    }
+
 
 }

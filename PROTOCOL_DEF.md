@@ -30,8 +30,7 @@
 
 ### Frames
 #### Hello
-This frame ist sent for star the communication with de server and guarantee the successful connection with the other side.
-The hello frame haven't payload. The server will be to respond with ACK frame response if was success.
+The hello frame haven't payload. The server will be to respond with ACK frame if was success.
 
 - Example REQ frame: `0x0000 0x3B 0x00 0x3B 0x24`
 - Example RES frame: `0x0000 0x3B 0x06 0x24`
@@ -55,7 +54,7 @@ If the operation is failed for any reason the server return a FAIL payload.
 #### Bye
 This frame close the connection with the server. The frame not have payload.
 
-- Example REQ frame: `0x0010 0x02 0x24`
+- Example REQ frame: `0x0010 0x3B 0x02 0x3B 0x24`
 - Example RES frame: `0x0010 0x3B 0x425945 0x24`
 
 #### Error frames:

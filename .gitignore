@@ -1,0 +1,5 @@
+/polish-calc-api/target/
+/polish-calc-server/target/
+/polish-calc-client/target/
+*.iml
+*.jar
