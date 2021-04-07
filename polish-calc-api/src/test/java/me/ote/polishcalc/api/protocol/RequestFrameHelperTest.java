@@ -4,6 +4,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 @QuarkusTest
 public class RequestFrameHelperTest {
 
@@ -45,7 +47,7 @@ public class RequestFrameHelperTest {
         Assertions.assertArrayEquals(new byte[0], helloFrame.getPayload());
         Assertions.assertArrayEquals(new byte[] {0x31, 0x20, 0x32, 0x20, 0x33, 0x20, 0x2A, 0x20, 0x2B}, opFrame.getPayload());
         Assertions.assertArrayEquals(new byte[0], byeFrame.getPayload());
-        Assertions.assertEquals("1 2 3 + *", ((OperationFrame)opFrame).getStringPayload());
+        Assertions.assertEquals("1 2 3 * +", ((OperationFrame)opFrame).getStringPayload());
     }
 
     @Test
@@ -72,6 +74,27 @@ public class RequestFrameHelperTest {
     public void unknownOperationTypeException() {
         RequestFrameHelper requestFrameHelper = new RequestFrameHelper();
         Assertions.assertThrows(FrameUnkonwnTypeException.class, () -> requestFrameHelper.readFrame(BAD_OPERATION_TYPE_FRAME));
+    }
+
+    @Test
+    public void buildHelloFrame() {
+        RequestFrameHelper requestFrameHelper = new RequestFrameHelper();
+        byte[] rawFrame = requestFrameHelper.buildFrame(HelloFrame.create());
+        Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x3b, 0x00, 0x3b, 0x24}, rawFrame);
+    }
+
+    @Test
+    public void buildByeFrame() {
+        RequestFrameHelper requestFrameHelper = new RequestFrameHelper();
+        byte[] rawFrame = requestFrameHelper.buildFrame(ByeFrame.create(1000));
+        Assertions.assertArrayEquals(new byte[]{0x03, (byte) 0xE8, 0x3b, 0x02, 0x3b, 0x24}, rawFrame);
+    }
+
+    @Test
+    public void buildOperationFrame() {
+        RequestFrameHelper requestFrameHelper = new RequestFrameHelper();
+        byte[] rawFrame = requestFrameHelper.buildFrame(OperationFrame.create(512,"2 3 5 + /".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertArrayEquals(new byte[]{0x02, 0x00, 0x3b, 0x01, 0x3b, 0x32, 0x20 , 0x33, 0x20, 0x35, 0x20, 0x2B, 0x20, 0x2F, 0x24}, rawFrame);
     }
 
 

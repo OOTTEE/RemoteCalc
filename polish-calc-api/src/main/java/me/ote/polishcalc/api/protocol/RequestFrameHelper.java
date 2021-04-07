@@ -7,6 +7,8 @@ import static me.ote.polishcalc.api.protocol.Operations.HELLO;
 
 public class RequestFrameHelper {
     public static final int FRAME_MIN_SIZE = 6;
+    public static final byte SEPARATOR = ';';
+    public static final byte END = '$';
 
     public RequestFrameHelper() {
     }
@@ -31,6 +33,22 @@ public class RequestFrameHelper {
                 return new ByeFrame(msg_id, operation, payload);
         }
         throw new FrameUnkonwnTypeException();
+    }
+
+    public byte[] buildFrame(RequestFrame requestFrame) {
+        byte[] rawFrame = new byte[6 + requestFrame.getPayload().length];
+        rawFrame[0] = (byte) ((requestFrame.getMessageId() >> 8 ) & 0xFF);
+        rawFrame[1] = (byte) (requestFrame.getMessageId() & 0xFF);
+        rawFrame[2] = SEPARATOR;
+        rawFrame[3] = (byte) (requestFrame.getOperation() & 0xFF);
+        rawFrame[4] = SEPARATOR;
+        if(requestFrame.getPayload() != null) {
+            for (int i = 0; i < requestFrame.getPayload().length; i++) {
+                rawFrame[5 + i] = requestFrame.getPayload()[i];
+            }
+        }
+        rawFrame[rawFrame.length-1] = END;
+        return rawFrame;
     }
 
 }
