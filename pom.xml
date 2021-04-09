@@ -9,8 +9,6 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>polish-calc-server</module>
-        <module>polish-calc-client</module>
         <module>polish-calc-api</module>
     </modules>
 
@@ -27,5 +25,20 @@
         <quarkus.platform.version>1.13.0.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>client</id>
+            <modules>
+                <module>polish-calc-client</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>server</id>
+            <modules>
+                <module>polish-calc-server</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
