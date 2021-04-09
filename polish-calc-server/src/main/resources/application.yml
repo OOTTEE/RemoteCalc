@@ -1,7 +1,19 @@
 quarkus:
   log:
+    file:
+      enable: true
+      path: /application/logs/main.log
+      level: INFO
     console:
-      json:
-        pretty-print: false
-        date-format: "YYYY-MM-dd HH:mm:ss"
-        exception-output-type: "detailed-and-formatted"
+      level: INFO
+      color: false
+"%dev":
+  quarkus:
+    log:
+      file:
+        enable: true
+        path: ${HOME}/logs/polish-calc-server/main.log
+        level: INFO
+
+service:
+  listen-port: ${SERVER_PORT:41000}
