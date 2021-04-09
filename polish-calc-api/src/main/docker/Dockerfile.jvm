@@ -2,15 +2,15 @@
 FROM quay.io/quarkus/centos-quarkus-maven:21.0.0-java11 AS build
 COPY pom.xml /usr/src/app/
 COPY polish-calc-api /usr/src/app/polish-calc-api
-COPY polish-calc-server /usr/src/app/polish-calc-server
+COPY polish-calc-client /usr/src/app/polish-calc-client
 
-RUN mvn -f /usr/src/app/pom.xml -Pserver -B de.qaware.maven:go-offline-maven-plugin:1.2.5:resolve-dependencies
+RUN mvn -f /usr/src/app/pom.xml -Pclient -B de.qaware.maven:go-offline-maven-plugin:1.2.5:resolve-dependencies
 
 USER root
 RUN chown -R quarkus /usr/src/app
 USER quarkus
 RUN mvn -f /usr/src/app/polish-calc-api/pom.xml clean install package \
-    && mvn -f /usr/src/app/pom.xml -Pserver clean package
+    && mvn -f /usr/src/app/pom.xml -Pclient clean package
 
 ## Stage 2: Create docker final image
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3 
@@ -36,10 +36,10 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
 ENV JAVA_OPTIONS="-Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 # We make four distinct layers so if there are application changes the library layers can be re-used
 COPY --from=build --chown=1001 /usr/src/app/polish-calc-api/target/quarkus-app/*.jar /deployments/lib/
-COPY --from=build --chown=1001 /usr/src/app/polish-calc-server/target/quarkus-app/lib/ /deployments/lib/
-COPY --from=build --chown=1001 /usr/src/app/polish-calc-server/target/quarkus-app/*.jar /deployments/
-COPY --from=build --chown=1001 /usr/src/app/polish-calc-server/target/quarkus-app/app/ /deployments/app/
-COPY --from=build --chown=1001 /usr/src/app/polish-calc-server/target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --from=build --chown=1001 /usr/src/app/polish-calc-client/target/quarkus-app/lib/ /deployments/lib/
+COPY --from=build --chown=1001 /usr/src/app/polish-calc-client/target/quarkus-app/*.jar /deployments/
+COPY --from=build --chown=1001 /usr/src/app/polish-calc-client/target/quarkus-app/app/ /deployments/app/
+COPY --from=build --chown=1001 /usr/src/app/polish-calc-client/target/quarkus-app/quarkus/ /deployments/quarkus/
 
 EXPOSE 41000
 USER 1001
