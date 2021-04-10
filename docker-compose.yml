@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: polish-calc-server/src/main/docker/Dockerfile.jvm
+    volumes:
+      - "./logs:/work/application/logs"
+    environment:
+      SERVER_PORT: 50000
+  client:
+    build:
+      context: .
+      dockerfile: polish-calc-client/src/main/docker/Dockerfile.jvm
+    environment:
+      HOST: server
+      PORT: 50000
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
