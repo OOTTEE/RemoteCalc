@@ -1,0 +1,4 @@
+
+server:
+  port: ${PORT:41000}
+  host: ${HOST:41000}

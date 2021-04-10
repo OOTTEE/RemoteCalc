@@ -2,7 +2,7 @@ quarkus:
   log:
     file:
       enable: true
-      path: /application/logs/main.log
+      path: /work/application/logs/main.log
       level: INFO
     console:
       level: INFO

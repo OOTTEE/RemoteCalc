@@ -9,20 +9,9 @@
   </parent>
 
   <groupId>me.ote.polishcalc.server</groupId>
-  <artifactId>${parent.artifactId}-server</artifactId>
-  <version>${parent.version}</version>
+  <artifactId>polish-calc-server</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
-        <version>${quarkus.platform.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>me.ote.remotecalc.api</groupId>
