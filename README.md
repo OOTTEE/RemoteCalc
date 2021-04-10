@@ -10,6 +10,8 @@ This project build two artifacts:
    -- HOST: Connection host. Default 127.0.0.1
    
 # Protocol
+[Protocol description](https://github.com/OOTTEE/RemoteCalc/blob/develop/PROTOCOL_DEF.md)
+
 
 # Docker usage
 ## Build server
