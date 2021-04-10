@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.Executor;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -42,7 +42,7 @@ public class StdinReader {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
                 synchronized (this) {
                     while (running.get()) {
-                        String line = bufferedReader.readLine().trim();
+                        String line = Optional.of(bufferedReader.readLine()).orElse("").trim();
                         this.lineConsumer.accept(line);
                         Thread.sleep(50);
                     }

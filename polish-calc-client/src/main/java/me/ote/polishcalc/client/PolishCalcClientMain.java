@@ -42,7 +42,8 @@ public class PolishCalcClientMain implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-        log.info("Start client");
+        log.info("Start client.");
+        log.info(String.format("Connecting with: %s:%s", serverHost, serverPort));
         Bootstrap bootstrap = createClient(new ChannelInboundHandlerAdapter() {
             final RequestFrameHelper requestFrameHelper = new RequestFrameHelper();
             final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
