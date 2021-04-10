@@ -9,7 +9,7 @@ RUN mvn -f /usr/src/app/pom.xml -Pclient -B de.qaware.maven:go-offline-maven-plu
 USER root
 RUN chown -R quarkus /usr/src/app
 USER quarkus
-RUN mvn -f /usr/src/app/polish-calc-api/pom.xml clean install package \
+RUN mvn -f /usr/src/app/polish-calc-api/pom.xml clean package install \
     && mvn -f /usr/src/app/pom.xml -Pclient clean package
 
 ## Stage 2: Create docker final image
