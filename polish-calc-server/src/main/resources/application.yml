@@ -1,0 +1,19 @@
+quarkus:
+  log:
+    file:
+      enable: true
+      path: /work/application/logs/main.log
+      level: INFO
+    console:
+      level: INFO
+      color: false
+"%dev":
+  quarkus:
+    log:
+      file:
+        enable: true
+        path: ${HOME}/logs/polish-calc-server/main.log
+        level: INFO
+
+service:
+  listen-port: ${SERVER_PORT:41000}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>me.ote.polishcalc</groupId>
+        <artifactId>polish-calc</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>me.ote.polishcalc.server</groupId>
+    <artifactId>${parent.artifactId}-server</artifactId>
+    <version>${parent.version}</version>
+    <dependencies>
+        <dependency>
+            <groupId>me.ote.remotecalc.api</groupId>
+            <artifactId>polish-calc-api</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-config-yaml</artifactId>
+        </dependency>
+        <!--    <dependency>-->
+        <!--      <groupId>io.quarkus</groupId>-->
+        <!--      <artifactId>quarkus-logging-json</artifactId>-->
+        <!--    </dependency>-->
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-netty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
