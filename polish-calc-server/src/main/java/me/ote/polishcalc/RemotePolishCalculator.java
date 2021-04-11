@@ -67,15 +67,15 @@ public class RemotePolishCalculator {
 
             private void handlerOperationFrame(ChannelHandlerContext ctx, OperationFrame operationFrame) {
                 final ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
-                final Operation operation = OperationFactory.createFromChain(operationFrame.getStringPayload());
                 try {
+                    final Operation operation = OperationFactory.createFromChain(PayloadAdapter.uncompress(operationFrame.getPayload()));
                     logger.info(String.format("<<< [ip:%s] Received OPERATION (Operation: %s)", ctx.channel().remoteAddress().toString(), operation.getOperationStr()));
                     Integer result = calculatorService.calculate(operation);
-                    ResponseFrame response = responseFrameHelper.createResponse(operationFrame.getMessageId(), String.valueOf(result));
+                    ResponseFrame response = responseFrameHelper.createResponse(operationFrame.getMessageId(), PayloadAdapter.compress(String.valueOf(result)));
                     sendFrame(ctx, response);
                     logger.info(String.format(">>> [ip:%s] Respond (Operation: %s, result: %s)", ctx.channel().remoteAddress(), operation.getOperationStr(), result));
-                } catch (Exception e) {
-                    logger.error(String.format("<<< [ip:%s] Received BAD OPERATION (Operation: %s)", ctx.channel().remoteAddress().toString(), operation.getOperationStr()));
+                } catch (Exception | PayloadFormatException e) {
+                    logger.error(String.format("<<< [ip:%s] Received BAD OPERATION (Operation: ", ctx.channel().remoteAddress().toString()).concat(String.format("%8s)", operationFrame.getStringPayload()).replace(" ", "0")));
                     ResponseFrame failResponse = responseFrameHelper.createFailResponse(operationFrame.getMessageId());
                     logger.info(String.format(">>> [ip:%s] Respond ERROR", ctx.channel().remoteAddress()));
                     sendFrame(ctx, failResponse);

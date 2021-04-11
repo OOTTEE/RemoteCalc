@@ -1,12 +1,7 @@
 package me.ote.polishcalc.api.protocol;
 
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 
-@RequestScoped
 public class PayloadAdapter {
     public static final byte NIBBLE_0 = 0x00;
     public static final byte NIBBLE_1 = 0x01;
@@ -25,13 +20,10 @@ public class PayloadAdapter {
     public static final byte NIBBLE_ESP  = 0x0E;
     public static final byte NIBBLE_FAIL = 0x0F;
 
-    @Inject
-    Logger log;
-
     PayloadAdapter() {
     }
 
-    public byte[] compress(String strPayload) throws PayloadFormatException {
+    public static byte[] compress(String strPayload) throws PayloadFormatException {
         byte[] nibblePayload = new byte[Math.floorDiv(strPayload.length() + 1, 2)];
         byte[] bytePayload = strPayload.getBytes(StandardCharsets.UTF_8);
         for (int i = 0; i < strPayload.length(); i++) {
@@ -48,7 +40,7 @@ public class PayloadAdapter {
         return nibblePayload;
     }
 
-    public String uncompress(byte[] rawPayload) throws PayloadFormatException {
+    public static String uncompress(byte[] rawPayload) throws PayloadFormatException {
         String strPayload = "";
         for (int i = 0; i < rawPayload.length; i++) {
             strPayload = strPayload
@@ -58,7 +50,7 @@ public class PayloadAdapter {
         return strPayload.trim();
     }
 
-    public byte charToNibble(char character) throws PayloadFormatException {
+    public static byte charToNibble(char character) throws PayloadFormatException {
         switch (character){
             case '0':
                 return NIBBLE_0;
@@ -97,7 +89,7 @@ public class PayloadAdapter {
         }
     }
 
-    public String nibbleToChar(byte nibble) throws PayloadFormatException {
+    public static String nibbleToChar(byte nibble) throws PayloadFormatException {
         switch (nibble) {
             case NIBBLE_0:
                 return "0";

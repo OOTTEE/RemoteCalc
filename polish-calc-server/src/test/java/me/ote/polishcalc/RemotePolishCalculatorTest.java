@@ -72,7 +72,7 @@ public class RemotePolishCalculatorTest {
     }
 
     @Test
-    public void testOperationFrame() throws InterruptedException {
+    public void testOperationFrame() throws InterruptedException, PayloadFormatException {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         final AtomicReference<ResponseFrame> frameAtomicReference = new AtomicReference<>();
@@ -81,7 +81,11 @@ public class RemotePolishCalculatorTest {
             @Override
             public void channelActive(ChannelHandlerContext ctx) throws Exception {
                 ByteBuf buffer = Unpooled.buffer();
-                buffer.writeBytes(requestFrameHelper.buildFrame(OperationFrame.create(100, "1 2 3 + *".getBytes(StandardCharsets.UTF_8))));
+                try {
+                    buffer.writeBytes(requestFrameHelper.buildFrame(OperationFrame.create(100, PayloadAdapter.compress("1 2 3 + *"))));
+                } catch (PayloadFormatException e) {
+                    e.printStackTrace();
+                }
                 ctx.writeAndFlush(buffer);
             }
 
@@ -98,7 +102,7 @@ public class RemotePolishCalculatorTest {
 
         ResponseFrame requestFrame = frameAtomicReference.get();
         Assertions.assertEquals(100, requestFrame.getMessageId());
-        Assertions.assertArrayEquals(requestFrame.getPayload(), new byte[]{'5'});
+        Assertions.assertArrayEquals(PayloadAdapter.uncompress(requestFrame.getPayload()).trim().getBytes(StandardCharsets.UTF_8), new byte[]{'5'});
 
         futureClient.channel().close();
         eventLoopGroup.shutdownGracefully();

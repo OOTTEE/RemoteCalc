@@ -4,6 +4,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 @QuarkusTest
 public class ResponseFrameHelperTest {
 
@@ -15,7 +17,7 @@ public class ResponseFrameHelperTest {
     @Test
     public void createResponseFrame(){
         ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
-        ResponseFrame responseFrame = responseFrameHelper.createResponse(10, "TEST_VALUE");
+        ResponseFrame responseFrame = responseFrameHelper.createResponse(10, "TEST_VALUE".getBytes(StandardCharsets.UTF_8));
         byte[] rawFrame = responseFrameHelper.buildFrame(responseFrame);
         Assertions.assertArrayEquals(RES_FRAME, rawFrame);
     }
@@ -39,7 +41,7 @@ public class ResponseFrameHelperTest {
     @Test
     public void createEmptyFrame(){
         ResponseFrameHelper responseFrameHelper = new ResponseFrameHelper();
-        ResponseFrame responseFrame = responseFrameHelper.createResponse(65535, "");
+        ResponseFrame responseFrame = responseFrameHelper.createResponse(65535, new byte[0]);
         byte[] rawFrame = responseFrameHelper.buildFrame(responseFrame);
         Assertions.assertArrayEquals(EMPTY_FRAME, rawFrame);
     }
