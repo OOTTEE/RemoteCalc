@@ -28,6 +28,31 @@
 - PAYLOAD: Response value of a request message.
 - END: The character `$` or `0x24` point the frame end.
 
+### Operation Payload format
+The payload for operations is a nibble array.
+
+Accepted characteres:
+
+| Character | Hex value |
+|-----------|-----------|
+| 0         | 0x0       |
+| 1         | 0x1       |
+| 2         | 0x2       |
+| 3         | 0x3       |
+| 4         | 0x4       |
+| 5         | 0x5       |
+| 6         | 0x6       |
+| 7         | 0x7       |
+| 8         | 0x8       |
+| 9         | 0x9       |
+| +         | 0xA       |
+| -         | 0xB       |
+| *         | 0xC       |
+| /         | 0xD       |
+| espacio   | 0xE       |
+| ERROR     | 0xE       |
+| FAIL      | 0xF       |
+
 ### Frames
 #### Hello
 The hello frame haven't payload. The server will be to respond with ACK frame if was success.
@@ -45,21 +70,21 @@ If the operation is failed for any reason the server return a FAIL payload.
 
 - Available operands: `+`, `-`, `*` and `/`
 - Example REQ frame to successful operation `1 2 3 * +`:
-    - REQ frame: `0x0001 0x3B 0x01 0x3B 0x3120322033202A202B 0x24`
-    - RES frame: `0x0001 0x3B 0x37 0x24`
+    - REQ frame: `0x0001 0x3B 0x01 0x3B 0x102030A0B0 0x24`
+    - RES frame: `0x0001 0x3B 0x70 0x24`
 - Example REQ frame to failes operation `1 + 2 * 3`:
-    - REQ frame: `0x0001 0x3B 0x01 0x3B 0x31202B2032202A2033 0x24`
-    - RES frame: `0x0001 0x3B 0x4665494C 0x24`
+    - REQ frame: `0x0001 0x3B 0x01 0x3B 0x10A020C030 0x24`
+    - RES frame: `0x0001 0x3B 0xFF 0x24`
 
 #### Bye
 This frame close the connection with the server. The frame not have payload.
 
 - Example REQ frame: `0x0010 0x3B 0x02 0x3B 0x24`
-- Example RES frame: `0x0010 0x3B 0x425945 0x24`
+- Example RES frame: `0x0010 0x3B 0x428969 0x24`
 
 #### Error frames:
 For any unknown frame received on the server side produce a response with ERROR payload.
 
 - Example REQ frame: `0x0012 0x10 0x20`
-- Example RES frame: `0x0000 0x3B 0x4552524F52 0x24`
+- Example RES frame: `0x0000 0x3B 0xEE 0x24`
 

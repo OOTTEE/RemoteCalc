@@ -15,8 +15,8 @@ public class ResponseFrameHelper {
     private static final int BYTE_MSG_ID = 0;
     private static final int BYTE_PAYLOAD = 3;
 
-    public ResponseFrame createResponse(Integer messageId, String payload) {
-        return new ResponseFrame(messageId, payload.getBytes(StandardCharsets.UTF_8));
+    public ResponseFrame createResponse(Integer messageId, byte[] payload) {
+        return new ResponseFrame(messageId, payload);
     }
 
     public ResponseFrame createFailResponse(Integer messageId) {

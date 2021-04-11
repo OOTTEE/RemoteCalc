@@ -55,16 +55,22 @@ public class PolishCalcClientMain implements QuarkusApplication {
                 byte[] frame = requestFrameHelper.buildFrame(HelloFrame.create(messageId.getAndIncrement()));
                 sendFrame(ctx, frame);
                 stdinReader.read(s -> {
-                    if(s.equals("quit")) {
+                    if (s.equals("quit")) {
                         ByeFrame byeFrame = ByeFrame.create(messageId.getAndIncrement());
                         pendingOps.put(byeFrame.getMessageId(), byeFrame);
                         sendFrame(ctx, requestFrameHelper.buildFrame(byeFrame));
                     } else {
-                        OperationFrame operationFrame = OperationFrame.create(messageId.getAndIncrement(), s.getBytes(StandardCharsets.UTF_8));
-                        pendingOps.put(operationFrame.getMessageId(), operationFrame);
-                        sendFrame(ctx, requestFrameHelper.buildFrame(operationFrame));
+                        OperationFrame operationFrame = null;
+                        try {
+                            byte[] compressPayload = PayloadAdapter.compress(s);
+                            operationFrame = OperationFrame.create(messageId.getAndIncrement(), compressPayload);
+                            pendingOps.put(operationFrame.getMessageId(), operationFrame);
+                            sendFrame(ctx, requestFrameHelper.buildFrame(operationFrame));
+                        } catch (PayloadFormatException e) {
+                            log.error("Invalid operation");
+                        }
                     }
-                    if(messageId.get() > MAX_ID ) {
+                    if (messageId.get() > MAX_ID) {
                         messageId.set(0);
                     }
                 });
@@ -84,15 +90,20 @@ public class PolishCalcClientMain implements QuarkusApplication {
                 ((ByteBuf) msg).readBytes(bytes);
                 ResponseFrame responseFrame = responseFrameHelper.readFrame(bytes);
 
-                if(responseFrame.getPayload().length > 0 && Arrays.equals(responseFrame.getPayload(), ResponseFrameHelper.ACK)){
+                if (responseFrame.getPayload().length > 0 && Arrays.equals(responseFrame.getPayload(), ResponseFrameHelper.ACK)) {
                     log.info("Connected to server");
-                } else if(responseFrame.getPayload().length > 0 && Arrays.equals(responseFrame.getPayload(), ResponseFrameHelper.BYE_PAYLOAD)) {
+                    log.info("You can start request operations like: 1 2 3 + *");
+                } else if (responseFrame.getPayload().length > 0 && Arrays.equals(responseFrame.getPayload(), ResponseFrameHelper.BYE_PAYLOAD)) {
                     log.info("Close connection");
                     ctx.channel().close();
-                } else if(responseFrame.getPayload().length > 0) {
+                } else if (responseFrame.getPayload().length > 0) {
                     OperationFrame operationFrame = (OperationFrame) pendingOps.get(responseFrame.getMessageId());
-                    if(operationFrame != null) {
-                        log.info(String.format("result of [%s] is %s", operationFrame.getStringPayload(), new String(responseFrame.getPayload(), StandardCharsets.UTF_8)));
+                    if (operationFrame != null) {
+                        try {
+                            log.info(String.format("result of [%s] is %s", PayloadAdapter.uncompress(operationFrame.getPayload()), PayloadAdapter.uncompress(responseFrame.getPayload())));
+                        } catch (PayloadFormatException e) {
+                            log.error("Invalid Operation response.");
+                        }
                     }
                 } else {
                     log.info("unkown server response");
@@ -129,7 +140,7 @@ public class PolishCalcClientMain implements QuarkusApplication {
         return b;
     }
 
-    private Integer getPortFromArgs(String ... args) {
+    private Integer getPortFromArgs(String... args) {
         if (args.length > 2) {
             try {
                 return Integer.parseInt(args[1]);
@@ -141,7 +152,7 @@ public class PolishCalcClientMain implements QuarkusApplication {
         }
     }
 
-    private String getAddrFromArgs(String ... args) {
+    private String getAddrFromArgs(String... args) {
         if (args.length >= 1) {
             return args[0];
         } else {
